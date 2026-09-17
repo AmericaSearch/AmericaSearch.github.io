@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>America Search</title>
+<style>
+  :root{
+    --bg: #202124;
+    --bg-2: #1b1c1f;
+    --text: #e8eaed;
+    --text-dim: #9aa0a6;
+    --pill: #303134;
+    --pill-hover: #3c4043;
+    --border: #5f6368;
+    --link: #8ab4f8;
+    --footer-bg: #171717;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    height: 100%;
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: Arial, Helvetica, sans-serif;
+  }
+  body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+
+  /* ===== Top bar ===== */
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px 26px;
+    font-size: 13px;
+  }
+  .topbar .left a {
+    color: var(--text);
+    text-decoration: none;
+    margin-right: 24px;
+  }
+  .topbar .left a:hover { text-decoration: underline; }
+  .topbar .right {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+  .topbar .right a {
+    color: var(--text);
+    text-decoration: none;
+  }
+  .topbar .right a:hover { text-decoration: underline; }
+  .icon-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    padding: 6px;
+    border-radius: 50%;
+  }
+  .icon-btn:hover { background: rgba(255,255,255,0.08); }
+  .avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: linear-gradient(135deg,#f4b400,#4285f4,#0f9d58,#db4437);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 15px;
+    cursor: default;
+  }
+
+  /* ===== Main / search ===== */
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding-top: 12vh;
+    text-align: center;
+  }
+  .logo {
+    font-size: 110px;
+    font-weight: 400;
+    letter-spacing: 1px;
+    margin: 0 0 34px 0;
+    font-family: "Trebuchet MS", "Comic Sans MS", Arial, sans-serif;
+    background: none;
+    color: var(--text);
+    user-select: none;
+  }
+  form.search-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  .search-box {
+    width: 92%;
+    max-width: 620px;
+    display: flex;
+    align-items: center;
+    background: var(--pill);
+    border: 1px solid #3c4043;
+    border-radius: 28px;
+    padding: 6px 10px 6px 20px;
+    height: 46px;
+    transition: box-shadow 0.15s ease, background 0.15s ease;
+  }
+  .search-box:hover, .search-box:focus-within {
+    background: #303134;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.5);
+    border-color: transparent;
+  }
+  .search-box .plus {
+    color: var(--text-dim);
+    margin-right: 12px;
+    font-size: 18px;
+  }
+  .search-box input[type="text"] {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    color: var(--text);
+    font-size: 16px;
+    height: 100%;
+  }
+  .search-box .sep {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .icon-mic, .icon-lens {
+    color: var(--text-dim);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 6px;
+    border-radius: 50%;
+  }
+  .icon-mic:hover, .icon-lens:hover { background: rgba(255,255,255,0.08); }
+  .ai-mode {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #3c4043;
+    color: var(--text);
+    border: none;
+    border-radius: 20px;
+    padding: 8px 14px;
+    font-size: 13px;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .ai-mode:hover { background: #4a4d51; }
+
+  .buttons-row {
+    margin-top: 30px;
+    display: flex;
+    gap: 12px;
+  }
+  .buttons-row button {
+    background: var(--pill);
+    color: #e8eaed;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    padding: 10px 16px;
+    font-size: 14px;
+    cursor: pointer;
+  }
+  .buttons-row button:hover {
+    border-color: #5f6368;
+    background: #35363a;
+  }
+
+  .lang-line {
+    margin-top: 26px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  .lang-line a { color: var(--link); text-decoration: none; }
+  .lang-line a:hover { text-decoration: underline; }
+
+  /* ===== Results ===== */
+  #results {
+    width: 92%;
+    max-width: 620px;
+    margin-top: 30px;
+    text-align: left;
+    display: none;
+  }
+  #results.show { display: block; }
+  #results .note {
+    color: var(--text-dim);
+    font-size: 13px;
+    margin-bottom: 14px;
+  }
+  #results a.result-link {
+    color: var(--link);
+    text-decoration: none;
+    font-size: 18px;
+  }
+  #results a.result-link:hover { text-decoration: underline; }
+
+  /* ===== Footer ===== */
+  .location-strip {
+    background: var(--bg-2);
+    padding: 14px 26px;
+    font-size: 15px;
+    color: var(--text);
+    border-top: 1px solid #2a2b2e;
+  }
+  footer.bottom-footer {
+    background: var(--footer-bg);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 26px;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  footer.bottom-footer .left, footer.bottom-footer .right {
+    display: flex;
+    gap: 26px;
+  }
+  footer.bottom-footer a {
+    color: var(--text-dim);
+    text-decoration: none;
+  }
+  footer.bottom-footer a:hover { text-decoration: underline; }
+
+  @media (max-width: 700px) {
+    .logo { font-size: 60px; }
+    .topbar .left a { margin-right: 14px; }
+    .buttons-row { flex-wrap: wrap; justify-content: center; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="left">
+      <a href="#" onclick="return false;">About</a>
+      <a href="#" onclick="return false;">Store</a>
+    </div>
+    <div class="right">
+      <a href="#" onclick="return false;">Gmail</a>
+      <a href="#" onclick="return false;">Images</a>
+      <button class="icon-btn" title="Google apps" onclick="return false;">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+          <circle cx="5" cy="5" r="2"/><circle cx="12" cy="5" r="2"/><circle cx="19" cy="5" r="2"/>
+          <circle cx="5" cy="12" r="2"/><circle cx="12" cy="12" r="2"/><circle cx="19" cy="12" r="2"/>
+          <circle cx="5" cy="19" r="2"/><circle cx="12" cy="19" r="2"/><circle cx="19" cy="19" r="2"/>
+        </svg>
+      </button>
+      <div class="avatar" title="Account">🇺🇸</div>
+    </div>
+  </div>
+
+  <main>
+    <h1 class="logo">America Search</h1>
+
+    <form class="search-form" id="searchForm">
+      <div class="search-box">
+        <span class="plus">+</span>
+        <input type="text" id="searchInput" autocomplete="off" autofocus placeholder="">
+        <div class="sep">
+          <span class="icon-mic" title="Search by voice">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 14a3 3 0 003-3V5a3 3 0 00-6 0v6a3 3 0 003 3z"/>
+              <path d="M19 11a7 7 0 01-14 0H3a9 9 0 008 8.94V22h2v-2.06A9 9 0 0021 11h-2z"/>
+            </svg>
+          </span>
+          <span class="icon-lens" title="Search by image">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="7" height="7" rx="1"/>
+              <rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="14" y="14" width="7" height="7" rx="1"/>
+              <path d="M3 14v4a3 3 0 003 3h4"/>
+            </svg>
+          </span>
+        </div>
+      </div>
+
+      <div class="buttons-row">
+        <button type="submit">America Search</button>
+        <button type="button" id="luckyBtn">I'm Feeling Lucky</button>
+      </div>
+    </form>
+
+    <div class="lang-line">
+      America Search offered in: <a href="#" onclick="return false;">Français</a>
+    </div>
+
+    <div id="results">
+      <div class="note">Showing results from the real internet (opens Google in a new tab):</div>
+      <a class="result-link" id="resultLink" href="#" target="_blank" rel="noopener">Search Google for your query →</a>
+    </div>
+  </main>
+
+  <div class="location-strip" id="locationStrip">Detecting location…</div>
+
+  <footer class="bottom-footer">
+    <div class="left">
+      <a href="#" onclick="return false;">Advertising</a>
+      <a href="#" onclick="return false;">Business</a>
+      <a href="#" onclick="return false;">How America Search works</a>
+    </div>
+    <div class="right">
+      <a href="#" onclick="return false;">Privacy</a>
+      <a href="#" onclick="return false;">Terms</a>
+      <a href="#" onclick="return false;">Settings</a>
+    </div>
+  </footer>
+
+<script>
+  // ---- Search behaviour (real Google search, opened in a new tab) ----
+  const form = document.getElementById('searchForm');
+  const input = document.getElementById('searchInput');
+  const results = document.getElementById('results');
+  const resultLink = document.getElementById('resultLink');
+  const luckyBtn = document.getElementById('luckyBtn');
+
+  function doSearch(lucky) {
+    const q = input.value.trim();
+    if (!q) return;
+    const url = lucky
+      ? 'https://www.google.com/search?q=' + encodeURIComponent(q) + '&btnI=1'
+      : 'https://www.google.com/search?q=' + encodeURIComponent(q);
+    resultLink.href = url;
+    resultLink.textContent = 'Open results for “' + q + '” on Google →';
+    results.classList.add('show');
+    window.open(url, '_blank', 'noopener');
+  }
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    doSearch(false);
+  });
+  luckyBtn.addEventListener('click', function() {
+    doSearch(true);
+  });
+
+  // ---- Country-based bottom-left text ----
+  // No network calls allowed here, so we infer a rough "country" from the
+  // browser's timezone (Intl API) and language settings. This is a fun
+  // approximation, not real geolocation.
+  function guessLocationLabel() {
+    let tz = '';
+    try {
+      tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+    } catch (e) { tz = ''; }
+
+    const usZones = [
+      'America/New_York','America/Chicago','America/Denver','America/Los_Angeles',
+      'America/Anchorage','America/Phoenix','America/Detroit','America/Boise',
+      'America/Indiana','America/Kentucky','America/North_Dakota','Pacific/Honolulu',
+      'America/Juneau','America/Sitka','America/Adak','America/Nome'
+    ];
+    const canadaZones = [
+      'America/Toronto','America/Vancouver','America/Edmonton','America/Winnipeg',
+      'America/Halifax','America/St_Johns','America/Regina','America/Iqaluit',
+      'America/Whitehorse','America/Yellowknife','America/Moncton','America/Glace_Bay',
+      'America/Goose_Bay','America/Thunder_Bay','America/Dawson'
+    ];
+    const centralAmericaZones = [
+      'America/Guatemala','America/Belize','America/Costa_Rica','America/El_Salvador',
+      'America/Managua','America/Panama','America/Tegucigalpa'
+    ];
+    const southAmericaZones = [
+      'America/Argentina','America/Sao_Paulo','America/Bogota','America/Lima',
+      'America/Santiago','America/Caracas','America/La_Paz','America/Asuncion',
+      'America/Montevideo','America/Guyana','America/Paramaribo','America/Cayenne',
+      'America/Manaus','America/Fortaleza','America/Recife','America/Rio_Branco',
+      'America/Bahia','America/Boa_Vista','America/Campo_Grande','America/Cuiaba',
+      'America/Eirunepe','America/Maceio','America/Noronha','America/Porto_Velho',
+      'America/Santarem','America/Guayaquil'
+    ];
+
+    const startsWithAny = (str, list) => list.some(z => str === z || str.startsWith(z));
+
+    if (tz === 'Asia/Tokyo' || tz === 'Asia/Tehran') {
+      return 'Islamic Republic of Japan';
+    }
+    if (startsWithAny(tz, canadaZones)) {
+      return 'Lake America';
+    }
+    if (startsWithAny(tz, usZones)) {
+      return 'America';
+    }
+    if (startsWithAny(tz, centralAmericaZones) || startsWithAny(tz, southAmericaZones)) {
+      return 'South America';
+    }
+    return 'Unknown Location';
+  }
+
+  document.getElementById('locationStrip').textContent = guessLocationLabel();
+</script>
+
+</body>
+</html>
