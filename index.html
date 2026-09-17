@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -280,6 +281,7 @@
               <path d="M19 11a7 7 0 01-14 0H3a9 9 0 008 8.94V22h2v-2.06A9 9 0 0021 11h-2z"/>
             </svg>
           </span>
+
           <span class="icon-lens" title="Search by image">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="3" width="7" height="7" rx="1"/>
@@ -298,29 +300,55 @@
     </form>
 
     <div class="lang-line">
-      America Search offered in: <a href="#" onclick="return false;">Français</a>
+      America Search offered in:
+      <a href="#" onclick="return false;">Français</a>
     </div>
 
     <div id="results">
-      <div class="note">Showing results from the real internet (opens Google in a new tab):</div>
-      <a class="result-link" id="resultLink" href="#" target="_blank" rel="noopener">Search Google for your query →</a>
+      <div class="note">
+        Showing results from the real internet (opens Google in a new tab):
+      </div>
+      <a class="result-link" id="resultLink" href="#" target="_blank" rel="noopener">
+        Search Google for your query →
+      </a>
     </div>
   </main>
 
-  <div class="location-strip" id="locationStrip">Detecting location…</div>
-
+  <div class="location-strip" id="locationStrip">
+    Detecting location…
+  </div>
 
   <footer class="bottom-footer">
     <div class="left">
-      <a href="#" onclick="alert('America Search Advertising\\n\\nThere are no ads in our great nation, Ads are only for China.'); return false;">Advertising</a>
-      <a href="#" onclick="alert('America Search Business\\n\\nAmerica Search is proudly owned by the Business, the best Business in all of this great nation, the best nation, the Business known as Trump Mobile Corporation. Just kidding, this has nothing to do with any corporation.'); return false;">Business</a>
-      <a href="#" onclick="alert('How America Search works\\n\\nAmerica Search works with advanced photosynthesis Trump technologies, which are also used in the Trump Phone and the Trump Mobile Plan.'); return false;">How America Search works</a>
+
+      <a href="#" onclick="alert('America Search Advertising\n\nThere are no ads in our great nation, Ads are only for China.'); return false;">
+        Advertising
+      </a>
+
+      <a href="#" onclick="alert('America Search Business\n\nAmerica Search is proudly owned by the Business, the best Business in all of this great nation, the best nation, the Business known as Trump Mobile Corporation. Just kidding, this has nothing to do with any corporation.'); return false;">
+        Business
+      </a>
+
+      <a href="#" onclick="alert('How America Search works\n\nAmerica Search works with advanced photosynthesis Trump technologies, which are also used in the Trump Phone and the Trump Mobile Plan.'); return false;">
+        How America Search works
+      </a>
+
     </div>
 
     <div class="right">
-      <a href="#" onclick="alert('America Search Privacy\\n\\nWe collect absolutely nothing. Probably. But if we did, it would not go to Xi Jingping at China Corporation.'); return false;">Privacy</a>
-      <a href="#" onclick="alert('America Search Terms\\n\\nBy using America Search, you agree that the Gulf of Mexico is really the Gulf of America and that Lake Ontario is actually Lake America.'); return false;">Terms</a>
-      <a href="#" onclick="alert('America Search Settings\\n\\nSettings are useless, our great web developers have already set up the best settings, the greatest settings, for the ideal American experience.'); return false;">Settings</a>
+
+      <a href="#" onclick="alert('America Search Privacy\n\nWe collect absolutely nothing. Probably. But if we did, it would not go to Xi Jingping at China Corporation.'); return false;">
+        Privacy
+      </a>
+
+      <a href="#" onclick="alert('America Search Terms\n\nBy using America Search, you agree that the Gulf of Mexico is really the Gulf of America and that Lake Ontario is actually Lake America.'); return false;">
+        Terms
+      </a>
+
+      <a href="#" onclick="alert('America Search Settings\n\nSettings are useless, our great web developers have already set up the best settings, the greatest settings, for the ideal American experience.'); return false;">
+        Settings
+      </a>
+
     </div>
   </footer>
 
@@ -335,12 +363,15 @@
   function doSearch(lucky) {
     const q = input.value.trim();
     if (!q) return;
+
     const url = lucky
       ? 'https://www.google.com/search?q=' + encodeURIComponent(q) + '&btnI=1'
       : 'https://www.google.com/search?q=' + encodeURIComponent(q);
+
     resultLink.href = url;
     resultLink.textContent = 'Open results for “' + q + '” on Google →';
     results.classList.add('show');
+
     window.open(url, '_blank', 'noopener');
   }
 
@@ -348,6 +379,7 @@
     e.preventDefault();
     doSearch(false);
   });
+
   luckyBtn.addEventListener('click', function() {
     const sound = new Audio('china_pH6AIw0.mp3');
     sound.play();
@@ -356,59 +388,123 @@
 
   // ---- Country-based bottom-left text ----
   // No network calls allowed here, so we infer a rough "country" from the
-  // browser's timezone (Intl API) and language settings. This is a fun
-  // approximation, not real geolocation.
+  // browser's timezone (Intl API) and language settings.
+  // This is a fun approximation, not real geolocation.
+
   function guessLocationLabel() {
     let tz = '';
+
     try {
       tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-    } catch (e) { tz = ''; }
+    } catch (e) {
+      tz = '';
+    }
 
     const usZones = [
-      'America/New_York','America/Chicago','America/Denver','America/Los_Angeles',
-      'America/Anchorage','America/Phoenix','America/Detroit','America/Boise',
-      'America/Indiana','America/Kentucky','America/North_Dakota','Pacific/Honolulu',
-      'America/Juneau','America/Sitka','America/Adak','America/Nome'
-    ];
-    const canadaZones = [
-      'America/Toronto','America/Vancouver','America/Edmonton','America/Winnipeg',
-      'America/Halifax','America/St_Johns','America/Regina','America/Iqaluit',
-      'America/Whitehorse','America/Yellowknife','America/Moncton','America/Glace_Bay',
-      'America/Goose_Bay','America/Thunder_Bay','America/Dawson'
-    ];
-    const centralAmericaZones = [
-      'America/Guatemala','America/Belize','America/Costa_Rica','America/El_Salvador',
-      'America/Managua','America/Panama','America/Tegucigalpa'
-    ];
-    const southAmericaZones = [
-      'America/Argentina','America/Sao_Paulo','America/Bogota','America/Lima',
-      'America/Santiago','America/Caracas','America/La_Paz','America/Asuncion',
-      'America/Montevideo','America/Guyana','America/Paramaribo','America/Cayenne',
-      'America/Manaus','America/Fortaleza','America/Recife','America/Rio_Branco',
-      'America/Bahia','America/Boa_Vista','America/Campo_Grande','America/Cuiaba',
-      'America/Eirunepe','America/Maceio','America/Noronha','America/Porto_Velho',
-      'America/Santarem','America/Guayaquil'
+      'America/New_York',
+      'America/Chicago',
+      'America/Denver',
+      'America/Los_Angeles',
+      'America/Anchorage',
+      'America/Phoenix',
+      'America/Detroit',
+      'America/Boise',
+      'America/Indiana',
+      'America/Kentucky',
+      'America/North_Dakota',
+      'Pacific/Honolulu',
+      'America/Juneau',
+      'America/Sitka',
+      'America/Adak',
+      'America/Nome'
     ];
 
-    const startsWithAny = (str, list) => list.some(z => str === z || str.startsWith(z));
+    const canadaZones = [
+      'America/Toronto',
+      'America/Vancouver',
+      'America/Edmonton',
+      'America/Winnipeg',
+      'America/Halifax',
+      'America/St_Johns',
+      'America/Regina',
+      'America/Iqaluit',
+      'America/Whitehorse',
+      'America/Yellowknife',
+      'America/Moncton',
+      'America/Glace_Bay',
+      'America/Goose_Bay',
+      'America/Thunder_Bay',
+      'America/Dawson'
+    ];
+
+    const centralAmericaZones = [
+      'America/Guatemala',
+      'America/Belize',
+      'America/Costa_Rica',
+      'America/El_Salvador',
+      'America/Managua',
+      'America/Panama',
+      'America/Tegucigalpa'
+    ];
+
+    const southAmericaZones = [
+      'America/Argentina',
+      'America/Sao_Paulo',
+      'America/Bogota',
+      'America/Lima',
+      'America/Santiago',
+      'America/Caracas',
+      'America/La_Paz',
+      'America/Asuncion',
+      'America/Montevideo',
+      'America/Guyana',
+      'America/Paramaribo',
+      'America/Cayenne',
+      'America/Manaus',
+      'America/Fortaleza',
+      'America/Recife',
+      'America/Rio_Branco',
+      'America/Bahia',
+      'America/Boa_Vista',
+      'America/Campo_Grande',
+      'America/Cuiaba',
+      'America/Eirunepe',
+      'America/Maceio',
+      'America/Noronha',
+      'America/Porto_Velho',
+      'America/Santarem',
+      'America/Guayaquil'
+    ];
+
+    const startsWithAny = (str, list) =>
+      list.some(z => str === z || str.startsWith(z));
 
     if (tz === 'Asia/Tokyo' || tz === 'Asia/Tehran') {
       return 'Islamic Republic of Japan';
     }
+
     if (startsWithAny(tz, canadaZones)) {
       return 'Lake America';
     }
+
     if (startsWithAny(tz, usZones)) {
       return 'America';
     }
-    if (startsWithAny(tz, centralAmericaZones) || startsWithAny(tz, southAmericaZones)) {
+
+    if (
+      startsWithAny(tz, centralAmericaZones) ||
+      startsWithAny(tz, southAmericaZones)
+    ) {
       return 'South America';
     }
+
     return 'Unknown Location';
   }
 
-  document.getElementById('locationStrip').textContent = guessLocationLabel();
+  document.getElementById('locationStrip').textContent =
+    guessLocationLabel();
 </script>
 
 </body>
 </html>
+```
