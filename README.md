@@ -3,3 +3,4 @@ In honor of our great country, I now present, the best, the greatest, search eng
 
 # Note
 I can't vote
+I also don't live in the USA
