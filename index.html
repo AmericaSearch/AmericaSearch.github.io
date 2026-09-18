@@ -1,4 +1,4 @@
-America Search v1.3.1
+America Search v1.3.2
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -174,14 +174,6 @@ America Search v1.3.1
   .buttons-row button:hover {
     border-color: #5f6368;
     background: #35363a;
-  }
-  .buttons-row button.trump-ai-btn {
-    background: #b32d29;
-    font-weight: bold;
-  }
-  .buttons-row button.trump-ai-btn:hover {
-    background: #c93530;
-    border-color: #e8eaed;
   }
 
   .lang-line {
@@ -396,7 +388,7 @@ America Search v1.3.1
       <div class="buttons-row">
         <button type="submit">America Search</button>
         <button type="button" id="luckyBtn">I'm Feeling Lucky</button>
-        <button type="button" class="trump-ai-btn" id="trumpAiBtn">🇺🇸 Trump AI</button>
+        <button type="button" id="trumpAiBtn">Trump AI</button>
       </div>
     </form>
 
@@ -484,7 +476,7 @@ America Search v1.3.1
 
   // ---- Trump AI Integrated Logic ----
   const MASTER_PROMPT = "You must talk like Donald Trump, and say Make America Great Again and Make the Internet Great Again";
-  const MODEL = "openai/gpt-oss-20b"; // Updated to valid Groq model
+  const MODEL = "openai/gpt-oss-120b";
   const API_URL = "https://api.groq.com/openai/v1/chat/completions";
   
   let apiKey = sessionStorage.getItem("cw_api_key") || "";
@@ -518,7 +510,7 @@ America Search v1.3.1
           <b>API Key Required:</b> Please paste your free Groq API key below to launch Trump AI. 
           <br><br>
           <input type="password" id="taiKeyInput" placeholder="gsk_..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #3c4043; background: #303134; color: #fff; margin-bottom: 8px;" />
-          <button id="taiSaveKeyBtn" style="background:#b32d29; color:white; border:none; padding: 6px 12px; border-radius: 6px; cursor:pointer;">Save Key & Start</button>
+          <button id="taiSaveKeyBtn" style="background:#303134; color:white; border:1px solid #5f6368; padding: 6px 12px; border-radius: 6px; cursor:pointer;">Save Key & Start</button>
           <br><br><a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color: var(--link);">Get a free Groq key here (no credit card needed)</a>
         </div>
       `;
