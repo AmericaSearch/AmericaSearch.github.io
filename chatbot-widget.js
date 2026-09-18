@@ -1,6 +1,7 @@
 /* chatbot-widget.js
- * No-backend chat widget. Calls the Anthropic Claude API directly from the
- * browser using the visitor's own API key.
+ * No-backend chat widget. Calls Groq's API directly from the browser using
+ * the visitor's own API key. Groq's free tier needs no credit card, so this
+ * is realistic to ask a random visitor to do.
  *
  * Setup:
  *   1. Edit MASTER_PROMPT below to whatever you want the bot's instructions
@@ -10,18 +11,18 @@
  *   3. Add <script src="/chatbot-widget.js" defer></script> before </body>
  *      on any page you want the chat bubble on.
  *
- * Each visitor pastes in their own Anthropic API key the first time they
- * open the chat. It's kept in this browser tab's sessionStorage only -
- * cleared when they close the tab, never sent anywhere but Anthropic's API.
+ * Each visitor pastes in their own Groq API key the first time they open the
+ * chat. It's kept in this browser tab's sessionStorage only - cleared when
+ * they close the tab, never sent anywhere but Groq's API.
  */
 (function () {
   // ---- EDIT THIS ----
   const MASTER_PROMPT =
     "You must talk like Donald Trump, and say Make America Great Again and Make the Internet Great Again";
-  const MODEL = "claude-sonnet-4-6"; // change to a different Claude model if you like
+  const MODEL = "llama-3.3-70b-versatile"; // change to a different Groq model if you like
   // -------------------
 
-  const API_URL = "https://api.anthropic.com/v1/messages";
+  const API_URL = "https://api.groq.com/openai/v1/chat/completions";
   let apiKey = sessionStorage.getItem("cw_api_key") || "";
   let history = []; // { role: "user" | "assistant", content: string }
 
@@ -93,10 +94,10 @@
     panel.innerHTML = `
       <div id="cw-header">Chat with us</div>
       <div id="cw-keyscreen">
-        <p>Paste your Anthropic API key to start chatting. It's stored only in this browser tab and sent only to Anthropic's API.</p>
-        <input id="cw-keyinput" type="password" placeholder="sk-ant-..." />
+        <p>Paste your free Groq API key to start chatting. It's stored only in this browser tab and sent only to Groq's API.</p>
+        <input id="cw-keyinput" type="password" placeholder="gsk_..." />
         <button id="cw-keysave">Start chatting</button>
-        <p>Don't have a key? <a href="https://console.anthropic.com/settings/keys" target="_blank" rel="noopener">Get one here</a>.</p>
+        <p>Don't have a key? <a href="https://console.groq.com/keys" target="_blank" rel="noopener">Get one free here</a> - no credit card needed.</p>
       </div>
     `;
     const input = panel.querySelector("#cw-keyinput");
@@ -163,15 +164,12 @@
           method: "POST",
           headers: {
             "Content-Type": "application/json",
-            "x-api-key": apiKey,
-            "anthropic-version": "2023-06-01",
-            "anthropic-dangerous-direct-browser-access": "true",
+            Authorization: `Bearer ${apiKey}`,
           },
           body: JSON.stringify({
             model: MODEL,
             max_tokens: 512,
-            system: MASTER_PROMPT,
-            messages: history,
+            messages: [{ role: "system", content: MASTER_PROMPT }, ...history],
           }),
         });
 
@@ -185,7 +183,7 @@
           return;
         }
 
-        const reply = data.content?.[0]?.text ?? "Sorry, I couldn't generate a reply.";
+        const reply = data.choices?.[0]?.message?.content ?? "Sorry, I couldn't generate a reply.";
         thinkingEl.textContent = reply;
         history.push({ role: "assistant", content: reply });
       } catch (err) {
