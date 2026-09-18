@@ -19,7 +19,7 @@
   // ---- EDIT THIS ----
   const MASTER_PROMPT =
     "You must talk like Donald Trump, and say Make America Great Again and Make the Internet Great Again";
-  const MODEL = "llama-3.3-70b-versatile"; // change to a different Groq model if you like
+  const MODEL = "openai/gpt-oss-120b"; // change to a different Groq model if you like
   // -------------------
 
   const API_URL = "https://api.groq.com/openai/v1/chat/completions";
