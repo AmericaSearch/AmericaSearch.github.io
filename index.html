@@ -1,4 +1,4 @@
-America Search v1.3.0ai-test
+America Search v1.3.1
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -91,8 +91,9 @@ America Search v1.3.0ai-test
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    padding-top: 12vh;
+    padding-top: 10vh;
     text-align: center;
+    padding-bottom: 40px;
   }
   .logo {
     font-size: 110px;
@@ -155,20 +156,6 @@ America Search v1.3.0ai-test
     border-radius: 50%;
   }
   .icon-mic:hover, .icon-lens:hover { background: rgba(255,255,255,0.08); }
-  .ai-mode {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    background: #3c4043;
-    color: var(--text);
-    border: none;
-    border-radius: 20px;
-    padding: 8px 14px;
-    font-size: 13px;
-    cursor: pointer;
-    white-space: nowrap;
-  }
-  .ai-mode:hover { background: #4a4d51; }
 
   .buttons-row {
     margin-top: 30px;
@@ -187,6 +174,14 @@ America Search v1.3.0ai-test
   .buttons-row button:hover {
     border-color: #5f6368;
     background: #35363a;
+  }
+  .buttons-row button.trump-ai-btn {
+    background: #b32d29;
+    font-weight: bold;
+  }
+  .buttons-row button.trump-ai-btn:hover {
+    background: #c93530;
+    border-color: #e8eaed;
   }
 
   .lang-line {
@@ -217,6 +212,105 @@ America Search v1.3.0ai-test
     font-size: 18px;
   }
   #results a.result-link:hover { text-decoration: underline; }
+
+  /* ===== Integrated Chatbox Container (Replaces section below logo) ===== */
+  #trump-ai-section {
+    display: none;
+    width: 92%;
+    max-width: 720px;
+    margin-top: 10px;
+    background: var(--bg-2);
+    border: 1px solid #3c4043;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    text-align: left;
+    overflow: hidden;
+    flex-direction: column;
+    height: 450px;
+  }
+  #trump-ai-section.active {
+    display: flex;
+  }
+  .tai-header {
+    background: #171717;
+    padding: 12px 18px;
+    font-size: 14px;
+    font-weight: bold;
+    border-bottom: 1px solid #3c4043;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: #ffcc00;
+  }
+  .tai-header button {
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    cursor: pointer;
+    font-size: 13px;
+  }
+  .tai-header button:hover { color: var(--text); }
+  .tai-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 14px;
+  }
+  .tai-msg {
+    padding: 10px 14px;
+    border-radius: 10px;
+    max-width: 85%;
+    line-height: 1.4;
+    white-space: pre-wrap;
+  }
+  .tai-msg.user {
+    background: #303134;
+    color: var(--text);
+    margin-left: auto;
+  }
+  .tai-msg.assistant {
+    background: #282a2e;
+    color: var(--text);
+    margin-right: auto;
+    border-left: 4px solid #b32d29;
+  }
+  .tai-msg.error {
+    background: #4a2020;
+    color: #ff9999;
+    margin-right: auto;
+  }
+  .tai-input-row {
+    display: flex;
+    padding: 12px;
+    background: var(--bg-2);
+    border-top: 1px solid #3c4043;
+    gap: 10px;
+  }
+  .tai-input-row input {
+    flex: 1;
+    background: var(--pill);
+    border: 1px solid #3c4043;
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: var(--text);
+    font-size: 14px;
+    outline: none;
+  }
+  .tai-input-row input:focus { border-color: var(--link); }
+  .tai-input-row button {
+    background: #b32d29;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0 18px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  .tai-input-row button:hover { background: #c93530; }
+  .tai-input-row button:disabled { opacity: 0.5; cursor: default; }
 
   /* ===== Footer ===== */
   .location-strip {
@@ -253,7 +347,6 @@ America Search v1.3.0ai-test
 </style>
 </head>
 <body>
-  <script src="/chatbot-widget.js" defer></script>
   <div class="topbar">
     <div class="left">
       <a href="#" onclick="return false;">About</a>
@@ -276,6 +369,7 @@ America Search v1.3.0ai-test
   <main>
     <h1 class="logo">America Search</h1>
 
+    <!-- Standard Search Form -->
     <form class="search-form" id="searchForm">
       <div class="search-box">
         <span class="plus">+</span>
@@ -302,10 +396,24 @@ America Search v1.3.0ai-test
       <div class="buttons-row">
         <button type="submit">America Search</button>
         <button type="button" id="luckyBtn">I'm Feeling Lucky</button>
+        <button type="button" class="trump-ai-btn" id="trumpAiBtn">🇺🇸 Trump AI</button>
       </div>
     </form>
 
-    <div class="lang-line">
+    <!-- Trump AI Integrated Section (Replaces search flow below logo when active) -->
+    <div id="trump-ai-section">
+      <div class="tai-header">
+        <span>🇺🇸 Trump AI Chat Assistant</span>
+        <button id="taiResetKeyBtn">Change API Key</button>
+      </div>
+      <div class="tai-messages" id="taiMessages"></div>
+      <div class="tai-input-row">
+        <input type="text" id="taiInput" placeholder="Ask Trump AI anything..." autocomplete="off">
+        <button id="taiSendBtn">Send</button>
+      </div>
+    </div>
+
+    <div class="lang-line" id="langLine">
       America Search offered in:
       <a href="#" onclick="return false;">Français</a>
     </div>
@@ -326,35 +434,14 @@ America Search v1.3.0ai-test
 
   <footer class="bottom-footer">
     <div class="left">
-
-      <a href="#" onclick="alert('America Search Advertising\n\nThere are no ads in our great nation, Ads are only for China.'); return false;">
-        Advertising
-      </a>
-
-      <a href="#" onclick="alert('America Search Business\n\nAmerica Search is proudly owned by the Business, the best Business in all of this great nation, the best nation, the Business known as Trump Mobile Corporation. Just kidding, this has nothing to do with any corporation.'); return false;">
-        Business
-      </a>
-
-      <a href="#" onclick="alert('How America Search works\n\nAmerica Search works with advanced photosynthesis Trump technologies, which are also used in the Trump Phone and the Trump Mobile Plan.'); return false;">
-        How America Search works
-      </a>
-
+      <a href="#" onclick="alert('America Search Advertising\n\nThere are no ads in our great nation, Ads are only for China.'); return false;">Advertising</a>
+      <a href="#" onclick="alert('America Search Business\n\nAmerica Search is proudly owned by the Business, the best Business in all of this great nation, the best nation, the Business known as Trump Mobile Corporation. Just kidding, this has nothing to do with any corporation.'); return false;">Business</a>
+      <a href="#" onclick="alert('How America Search works\n\nAmerica Search works with advanced photosynthesis Trump technologies, which are also used in the Trump Phone and the Trump Mobile Plan.'); return false;">How America Search works</a>
     </div>
-
     <div class="right">
-
-      <a href="#" onclick="alert('America Search Privacy\n\nWe collect absolutely nothing. Probably. But if we did, it would not go to Xi Jingping at China Corporation.'); return false;">
-        Privacy
-      </a>
-
-      <a href="#" onclick="alert('America Search Terms\n\nBy using America Search, you agree that the Gulf of Mexico is really the Gulf of America and that Lake Ontario is actually Lake America.'); return false;">
-        Terms
-      </a>
-
-      <a href="#" onclick="alert('America Search Settings\n\nSettings are useless, our great web developers have already set up the best settings, the greatest settings, for the ideal American experience.'); return false;">
-        Settings
-      </a>
-
+      <a href="#" onclick="alert('America Search Privacy\n\nWe collect absolutely nothing. Probably. But if we did, it would not go to Xi Jingping at China Corporation.'); return false;">Privacy</a>
+      <a href="#" onclick="alert('America Search Terms\n\nBy using America Search, you agree that the Gulf of Mexico is really the Gulf of America and that Lake Ontario is actually Lake America.'); return false;">Terms</a>
+      <a href="#" onclick="alert('America Search Settings\n\nSettings are useless, our great web developers have already set up the best settings, the greatest settings, for the ideal American experience.'); return false;">Settings</a>
     </div>
   </footer>
 
@@ -365,6 +452,9 @@ America Search v1.3.0ai-test
   const results = document.getElementById('results');
   const resultLink = document.getElementById('resultLink');
   const luckyBtn = document.getElementById('luckyBtn');
+  const trumpAiBtn = document.getElementById('trumpAiBtn');
+  const trumpAiSection = document.getElementById('trump-ai-section');
+  const langLine = document.getElementById('langLine');
 
   function doSearch(lucky) {
     const q = input.value.trim();
@@ -388,127 +478,154 @@ America Search v1.3.0ai-test
 
   luckyBtn.addEventListener('click', function() {
     const sound = new Audio('china_pH6AIw0.mp3');
-    sound.play();
+    sound.play().catch(() => {});
     doSearch(true);
   });
 
-  // ---- Country-based bottom-left text ----
-  // No network calls allowed here, so we infer a rough "country" from the
-  // browser's timezone (Intl API) and language settings.
-  // This is a fun approximation, not real geolocation.
+  // ---- Trump AI Integrated Logic ----
+  const MASTER_PROMPT = "You must talk like Donald Trump, and say Make America Great Again and Make the Internet Great Again";
+  const MODEL = "llama-3.3-70b-versatile"; // Updated to valid Groq model
+  const API_URL = "https://api.groq.com/openai/v1/chat/completions";
+  
+  let apiKey = sessionStorage.getItem("cw_api_key") || "";
+  let chatHistory = [];
 
+  const taiMessages = document.getElementById('taiMessages');
+  const taiInput = document.getElementById('taiInput');
+  const taiSendBtn = document.getElementById('taiSendBtn');
+  const taiResetKeyBtn = document.getElementById('taiResetKeyBtn');
+
+  trumpAiBtn.addEventListener('click', function() {
+    const isVisible = trumpAiSection.classList.contains('active');
+    if (isVisible) {
+      trumpAiSection.classList.remove('active');
+      form.style.display = 'flex';
+      langLine.style.display = 'block';
+    } else {
+      form.style.display = 'none';
+      results.classList.remove('show');
+      langLine.style.display = 'none';
+      trumpAiSection.classList.add('active');
+      renderTrumpChat();
+    }
+  });
+
+  function renderTrumpChat() {
+    taiMessages.innerHTML = "";
+    if (!apiKey) {
+      taiMessages.innerHTML = `
+        <div class="tai-msg error">
+          <b>API Key Required:</b> Please paste your free Groq API key below to launch Trump AI. 
+          <br><br>
+          <input type="password" id="taiKeyInput" placeholder="gsk_..." style="width: 100%; padding: 8px; border-radius: 6px; border: 1px solid #3c4043; background: #303134; color: #fff; margin-bottom: 8px;" />
+          <button id="taiSaveKeyBtn" style="background:#b32d29; color:white; border:none; padding: 6px 12px; border-radius: 6px; cursor:pointer;">Save Key & Start</button>
+          <br><br><a href="https://console.groq.com/keys" target="_blank" rel="noopener" style="color: var(--link);">Get a free Groq key here (no credit card needed)</a>
+        </div>
+      `;
+      document.getElementById('taiSaveKeyBtn').addEventListener('click', () => {
+        const val = document.getElementById('taiKeyInput').value.trim();
+        if (!val) return;
+        apiKey = val;
+        sessionStorage.setItem("cw_api_key", apiKey);
+        chatHistory = [];
+        renderTrumpChat();
+      });
+    } else {
+      if (chatHistory.length === 0) {
+        addTaiMessage("assistant", "HELLO! Welcome to Trump AI. We are going to make search great again, believe me! What's on your mind?");
+      } else {
+        chatHistory.forEach(m => addTaiMessage(m.role, m.content));
+      }
+    }
+  }
+
+  function addTaiMessage(role, content) {
+    const div = document.createElement('div');
+    div.className = `tai-msg ${role}`;
+    div.textContent = content;
+    taiMessages.appendChild(div);
+    taiMessages.scrollTop = taiMessages.scrollHeight;
+    return div;
+  }
+
+  async function sendTrumpMessage() {
+    const text = taiInput.value.trim();
+    if (!text || !apiKey) return;
+    taiInput.value = "";
+    taiSendBtn.disabled = true;
+
+    addTaiMessage("user", text);
+    chatHistory.push({ role: "user", content: text });
+
+    const thinkingEl = addTaiMessage("assistant", "Thinking bigly...");
+
+    try {
+      const res = await fetch(API_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: MODEL,
+          max_tokens: 512,
+          messages: [{ role: "system", content: MASTER_PROMPT }, ...chatHistory],
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        thinkingEl.className = "tai-msg error";
+        thinkingEl.textContent = data.error?.message || "Something went wrong. Check your API key.";
+        chatHistory.pop();
+        return;
+      }
+
+      const reply = data.choices?.[0]?.message?.content ?? "Total disaster, couldn't generate a reply.";
+      thinkingEl.textContent = reply;
+      chatHistory.push({ role: "assistant", content: reply });
+    } catch (err) {
+      thinkingEl.className = "tai-msg error";
+      thinkingEl.textContent = "Network error. Please try again.";
+      chatHistory.pop();
+    } finally {
+      taiSendBtn.disabled = false;
+    }
+  }
+
+  taiSendBtn.addEventListener('click', sendTrumpMessage);
+  taiInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') sendTrumpMessage();
+  });
+
+  taiResetKeyBtn.addEventListener('click', () => {
+    apiKey = "";
+    sessionStorage.removeItem("cw_api_key");
+    chatHistory = [];
+    renderTrumpChat();
+  });
+
+  // ---- Country-based bottom-left text ----
   function guessLocationLabel() {
     let tz = '';
-
     try {
       tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
     } catch (e) {
       tz = '';
     }
 
-    const usZones = [
-      'America/New_York',
-      'America/Chicago',
-      'America/Denver',
-      'America/Los_Angeles',
-      'America/Anchorage',
-      'America/Phoenix',
-      'America/Detroit',
-      'America/Boise',
-      'America/Indiana',
-      'America/Kentucky',
-      'America/North_Dakota',
-      'Pacific/Honolulu',
-      'America/Juneau',
-      'America/Sitka',
-      'America/Adak',
-      'America/Nome'
-    ];
+    const usZones = ['America/New_York', 'America/Chicago', 'America/Denver', 'America/Los_Angeles', 'America/Anchorage', 'America/Phoenix', 'America/Detroit', 'America/Boise', 'America/Indiana', 'America/Kentucky', 'America/North_Dakota', 'Pacific/Honolulu'];
+    const canadaZones = ['America/Toronto', 'America/Vancouver', 'America/Edmonton', 'America/Winnipeg', 'America/Halifax', 'America/St_Johns', 'America/Regina', 'America/Iqaluit', 'America/Whitehorse', 'America/Yellowknife'];
+    const startsWithAny = (str, list) => list.some(z => str === z || str.startsWith(z));
 
-    const canadaZones = [
-      'America/Toronto',
-      'America/Vancouver',
-      'America/Edmonton',
-      'America/Winnipeg',
-      'America/Halifax',
-      'America/St_Johns',
-      'America/Regina',
-      'America/Iqaluit',
-      'America/Whitehorse',
-      'America/Yellowknife',
-      'America/Moncton',
-      'America/Glace_Bay',
-      'America/Goose_Bay',
-      'America/Thunder_Bay',
-      'America/Dawson'
-    ];
-
-    const centralAmericaZones = [
-      'America/Guatemala',
-      'America/Belize',
-      'America/Costa_Rica',
-      'America/El_Salvador',
-      'America/Managua',
-      'America/Panama',
-      'America/Tegucigalpa'
-    ];
-
-    const southAmericaZones = [
-      'America/Argentina',
-      'America/Sao_Paulo',
-      'America/Bogota',
-      'America/Lima',
-      'America/Santiago',
-      'America/Caracas',
-      'America/La_Paz',
-      'America/Asuncion',
-      'America/Montevideo',
-      'America/Guyana',
-      'America/Paramaribo',
-      'America/Cayenne',
-      'America/Manaus',
-      'America/Fortaleza',
-      'America/Recife',
-      'America/Rio_Branco',
-      'America/Bahia',
-      'America/Boa_Vista',
-      'America/Campo_Grande',
-      'America/Cuiaba',
-      'America/Eirunepe',
-      'America/Maceio',
-      'America/Noronha',
-      'America/Porto_Velho',
-      'America/Santarem',
-      'America/Guayaquil'
-    ];
-
-    const startsWithAny = (str, list) =>
-      list.some(z => str === z || str.startsWith(z));
-
-    if (tz === 'Asia/Tokyo' || tz === 'Asia/Tehran') {
-      return 'Islamic Republic of Japan';
-    }
-
-    if (startsWithAny(tz, canadaZones)) {
-      return 'Lake America';
-    }
-
-    if (startsWithAny(tz, usZones)) {
-      return 'America';
-    }
-
-    if (
-      startsWithAny(tz, centralAmericaZones) ||
-      startsWithAny(tz, southAmericaZones)
-    ) {
-      return 'South America';
-    }
-
-    return 'Unknown Location';
+    if (tz === 'Asia/Tokyo' || tz === 'Asia/Tehran') return 'Islamic Republic of Japan';
+    if (startsWithAny(tz, canadaZones)) return 'Lake America';
+    if (startsWithAny(tz, usZones)) return 'America';
+    return 'South America';
   }
 
-  document.getElementById('locationStrip').textContent =
-    guessLocationLabel();
+  document.getElementById('locationStrip').textContent = guessLocationLabel();
 </script>
 
 </body>
